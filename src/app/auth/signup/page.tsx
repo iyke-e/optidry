@@ -1,9 +1,6 @@
 import Button from "@/components/ul/Button";
 import Input from "@/components/ul/Input";
-import authsideimg from "@/assets/images/authsideimg.png";
-import Logo from "@/components/ul/Logo";
 import Link from "next/link";
-import GoogleSignIn from "@/components/ul/GoogleSignIn";
 import AuthWrapper from "@/components/Auth";
 
 const SignupScreen = () => {
