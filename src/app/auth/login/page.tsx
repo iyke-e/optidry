@@ -25,7 +25,7 @@ const LoginScreen = () => {
           </div>
         </div>
 
-        <Link className="w-full" href={"/dashboard"}>
+        <Link className="w-full" href={"/new-run"}>
           <Button className={"w-full"} name="Login" />
         </Link>
       </form>
