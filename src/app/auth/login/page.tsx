@@ -31,7 +31,7 @@ const LoginScreen = () => {
       </form>
       <div className="mt-6">
         <p className="text-center ">
-          Don't have an account?{" "}
+          {"Don't have an account?"}
           <Link className="text-secondary font-semibold" href={"/auth/signup"}>
             Signup
           </Link>
