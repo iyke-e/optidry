@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --font-electrolize: "Electrolize", sans-serif;
+  --font-geist: "Geist", sans-serif;
+  --font-geist-mono: "Geist Mono", monospace;
+
+  --color-primary: #58a3b3;
+  --color-secondary: #166074;
+  --color-success: #0ae444;
+  --color-danger: #db0303;
+  --color-yellow: #fdba2a;
+  --color-light-blue: #a7d0d6;
+  --color-dark-blue: #374151;
+  --color-input-bg: #efefef;
+}
