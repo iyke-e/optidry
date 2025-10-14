@@ -1,5 +1,4 @@
 import React from "react";
-import { FaSearch } from "react-icons/fa";
 import Button from "@/components/ul/Button";
 
 const dryerList = [
@@ -43,26 +42,20 @@ const dryerList = [
 
 const DryerProfileScreen = () => {
   return (
-    <div className="px-12 py-8">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-text-primary text-3xl font-bold">
-            Dryer Profile
-          </h1>
-        </div>
-
-        <div className="relative ">
-          <FaSearch className="text-text-primary" />
-        </div>
-      </div>
-      <div className="flex mt-8 flex-wrap gap-8">
+    <div className=" py-8">
+      <div className="grid grid-cols-3 gap-8">
         {dryerList.map((item, index) => (
-          <div key={index}>
-            <div className="h-20 w-40 bg-gray-400 rounded-md" />
-            <h3 className="text-text-primary text-xl mb-2 mt-4">{item.name}</h3>
-            <p className="mb-8">{item.description}</p>
-
-            <Button className="ml-auto" name="Select" />
+          <div className=" bg-white  p-2 rounded-lg" key={index}>
+            <div className="h-30  bg-gray-400  rounded-md" />
+            <div className="px-2 pb-2">
+              <h3 className="text-text-primary text-xl mb-2 mt-4">
+                {item.name}
+              </h3>
+              <p className="mb-4">{item.description}</p>
+              <div className="grid place-content-end">
+                <Button className="ml-auto" name="Select" />
+              </div>
+            </div>
           </div>
         ))}
       </div>

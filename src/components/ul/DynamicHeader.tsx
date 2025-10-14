@@ -17,14 +17,12 @@ export default function DynamicHeader() {
     "/new-run/notes": "",
     "/materials": "Material Profiles",
     "/dryer": "Dryer Profiles",
+    "/dryer-profile": "Dryer Profiles",
+    "/help": "? Help & Quick Guide",
+    "/settings": "⚙️ Settings",
   };
 
   const title = titles[pathname] || "";
 
-  return (
-    <>
-      <p className="text-white">Welcome, Mrs Megan</p>
-      <h1 className="text-center text-3xl mt-8 text-white">{title}</h1>
-    </>
-  );
+  return <h1 className="text-center text-3xl  text-white">{title}</h1>;
 }

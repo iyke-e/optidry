@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type: "email" | "password" | "text" | "number";
   label: string;
   placeholder?: string;
 }
 
-const Input = ({ type = "text", label, placeholder }: InputProps) => {
+const Input = ({ type = "text", label, placeholder, ...prop }: InputProps) => {
   const [visible, setVisible] = useState(false);
   return (
     <div className="relative grid gap-1">
@@ -20,6 +20,7 @@ const Input = ({ type = "text", label, placeholder }: InputProps) => {
           className="border-0 w-full placeholder:text-gray-400 outline-0"
           placeholder={placeholder}
           type={type === "password" ? (visible ? "text" : "password") : type}
+          {...prop}
         />
         {type === "password" && (
           <div
