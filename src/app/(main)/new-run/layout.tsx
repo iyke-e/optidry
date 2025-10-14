@@ -13,7 +13,7 @@ const layout = ({ children }: { children: ReactNode }) => {
         <DynamicHeader />
       </div>
 
-      <div className="w-9/10 mx-auto mt-10 rounded-t-2xl bg-white p-14">
+      <div className="w-9/10 mx-auto mt-4 rounded-t-2xl bg-white p-14">
         {children}
       </div>
     </div>

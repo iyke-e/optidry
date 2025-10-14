@@ -11,11 +11,15 @@ export default function DynamicHeader() {
     "/new-run/moisture-content/set-value": "Moisture Content",
     "/new-run/sensor-check": "Checking Your Sensors...",
     "/new-run/optimization": "Ready to Begin Optimzing?",
+    "/new-run/optimization/optimization-run": "Optimzation Running...",
+    "/new-run/optimization/optimization-report":
+      "Optimization Finished Successfully!",
+    "/new-run/notes": "",
     "/materials": "Material Profiles",
     "/dryer": "Dryer Profiles",
   };
 
-  const title = titles[pathname] || "Drying Process";
+  const title = titles[pathname] || "";
 
   return (
     <>

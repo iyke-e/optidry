@@ -14,27 +14,28 @@ const SidemenuWrapper = ({ children }: { children: ReactNode }) => {
   const pathName = usePathname();
 
   return (
-    <div className="grid h-screen grid-cols-[320px_1fr]">
+    <div className="grid grid-cols-[320px_1fr]">
       <div>
-        <div className="mt-4">
+        <div className="sticky bg-[#F8FAF9] top-0 left-0 h-screen">
           <Logo />
-        </div>
 
-        <nav className="grid gap-6  py-8 px-8">
-          {dashboardnavlist.map((item, index) => (
-            <Link
-              key={index}
-              className={`${
-                pathName.includes(item.url) ? "bg-primary  text-white" : ""
-              } flex rounded-2xl font-semibold py-2 px-4 shadow-2xl border-b-2 border-secondary gap-4 items-center`}
-              href={item.url}
-            >
-              <item.icon />
-              {item.name}
-            </Link>
-          ))}
-        </nav>
+          <nav className="grid gap-6  py-8 px-8">
+            {dashboardnavlist.map((item, index) => (
+              <Link
+                key={index}
+                className={`${
+                  pathName.includes(item.url) ? "bg-primary  text-white" : ""
+                } flex rounded-2xl font-semibold py-2 px-4 shadow-2xl border-b-2 border-secondary gap-4 items-center`}
+                href={item.url}
+              >
+                <item.icon />
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
+
       <div>{children}</div>
     </div>
   );

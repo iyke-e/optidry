@@ -37,7 +37,7 @@ const Optimization = () => {
 
         <div className="flex  items-center gap-10 justify-center">
           <Button name={"Go Back"} />
-          <Link href={"/new-run/optimization"}>
+          <Link href={"/new-run/optimization/optimization-run"}>
             <Button name={"Start Optimizing"} />
           </Link>
         </div>
