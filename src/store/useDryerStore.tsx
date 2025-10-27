@@ -8,12 +8,20 @@ export interface DryerRunData {
   initial_moisture_content: string;
   final_moisture_content: string;
   timestamp: string;
+  last_temperature?: string | null;
+  last_humidity?: string | null;
+  last_vibration?: string | null;
+  dryingProgress?: number | null;
 }
 
 interface DryerStore {
   runData: DryerRunData;
-  updateRunData: (key: keyof DryerRunData, value: string) => void;
+  updateRunData: (
+    key: keyof DryerRunData,
+    value: string | number | null | undefined
+  ) => void;
   resetRunData: () => void;
+  setRunData: (data: Partial<DryerRunData>) => void;
 }
 
 export const useDryerStore = create<DryerStore>()(
@@ -25,10 +33,26 @@ export const useDryerStore = create<DryerStore>()(
         initial_moisture_content: "",
         final_moisture_content: "",
         timestamp: new Date().toISOString(),
+        last_temperature: null,
+        last_humidity: null,
+        last_vibration: null,
+        dryingProgress: null,
       },
       updateRunData: (key, value) =>
         set((state) => ({
-          runData: { ...state.runData, [key]: value },
+          runData: {
+            ...state.runData,
+            [key]: value ?? null, // ensures undefined is also stored as null
+          },
+        })),
+      setRunData: (data) =>
+        set((state) => ({
+          runData: {
+            ...state.runData,
+            ...Object.fromEntries(
+              Object.entries(data).map(([k, v]) => [k, v ?? null]) // normalize null/undefined
+            ),
+          },
         })),
       resetRunData: () =>
         set({
@@ -38,6 +62,10 @@ export const useDryerStore = create<DryerStore>()(
             initial_moisture_content: "",
             final_moisture_content: "",
             timestamp: new Date().toISOString(),
+            last_temperature: null,
+            last_humidity: null,
+            last_vibration: null,
+            dryingProgress: null,
           },
         }),
     }),

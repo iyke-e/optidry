@@ -3,21 +3,16 @@
 import Button from "@/components/ul/Button";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useDryerStore } from "@/store/useDryerStore";
 
 const Optimization = () => {
   const { runData } = useDryerStore();
+  const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const {
-    dryer,
-    crop,
-    initial_moisture_content,
-    final_moisture_content,
-    timestamp,
-  } = runData;
+  const { dryer, crop, initial_moisture_content, final_moisture_content } =
+    runData;
 
   const canProceed =
     isChecked &&
@@ -26,44 +21,9 @@ const Optimization = () => {
     initial_moisture_content.trim() &&
     final_moisture_content.trim();
 
-  const handleOptimizationStart = async () => {
+  const handleOptimizationStart = () => {
     if (!canProceed) return;
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch(
-        "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/optimize",
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            dryer,
-            crop,
-            initial_moisture_content,
-            final_moisture_content,
-            timestamp,
-          }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        // Show backend error message if present
-        setError(data?.detail || "Optimization failed");
-        return;
-      }
-
-      window.location.href = "/new-run/optimization/optimization-run";
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    router.push("/new-run/optimization/optimization-run");
   };
 
   return (
@@ -109,19 +69,15 @@ const Optimization = () => {
           </p>
         </div>
 
-        {error && (
-          <p className="text-red-500 text-center font-medium mt-2">{error}</p>
-        )}
-
         <div className="flex items-center gap-10 justify-center">
           <Link href="/new-run/sensor-check">
             <Button name="Go Back" />
           </Link>
 
           <Button
-            name={loading ? "Starting..." : "Start Optimizing"}
+            name="Start Optimizing"
             onClick={handleOptimizationStart}
-            disabled={!canProceed || loading}
+            disabled={!canProceed}
           />
         </div>
       </div>
