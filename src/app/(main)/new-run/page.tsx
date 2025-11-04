@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Button from "@/components/ul/Button";
 import { useDryerStore } from "@/store/useDryerStore";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const materialsToDry = [
   { label: "Select Material", value: "" },
@@ -37,7 +37,7 @@ const dryerTypes = [
 ];
 
 const DashboardScreen = () => {
-  const { runData, updateRunData } = useDryerStore();
+  const { runData, updateRunData, resetRunData } = useDryerStore();
   const [error, setError] = useState("");
 
   const canProceed = runData.crop && runData.dryer;
@@ -50,6 +50,10 @@ const DashboardScreen = () => {
       setError("");
     }
   };
+
+  useEffect(() => {
+    resetRunData();
+  }, []);
 
   return (
     <>
@@ -73,7 +77,7 @@ const DashboardScreen = () => {
             ))}
           </select>
           <Link
-            href="/dryer-library"
+            href="/material-profiles"
             className="text-text-primary font-semibold ml-auto"
           >
             Go to Material Library
@@ -95,7 +99,7 @@ const DashboardScreen = () => {
             ))}
           </select>
           <Link
-            href="/dryer-library"
+            href="/dryer-profile"
             className="text-text-primary font-semibold ml-auto"
           >
             Go to Dryer Library
@@ -105,7 +109,7 @@ const DashboardScreen = () => {
         <p>
           OR{" "}
           <Link
-            href="/dryer-library"
+            href="/saved-runs"
             className="text-text-primary font-semibold ml-auto"
           >
             Choose From Saved Runs

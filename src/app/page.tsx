@@ -19,9 +19,9 @@ const Home = () => {
         Welcome to OptiDry, your smart drying optimization assistant.
       </p>
       <div className="flex gap-6 items-center mt-8 justify-center">
-        <Button name="Start Monitoring" />
+        <Button name="View demo" />
         <Link href={"/auth/login"}>
-          <Button name="View demo" />
+          <Button name="Start Monitoring" />
         </Link>
       </div>
       <div

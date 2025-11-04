@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDryerStore } from "@/store/useDryerStore";
 import { useSensorStore } from "@/store/useSensorStore";
+import SensorGraph from "@/components/optimization/SensorGraph";
 
 const OptimizationReportScreen = () => {
   const router = useRouter();
@@ -59,7 +60,7 @@ const OptimizationReportScreen = () => {
             </span>
           </p>
         </div>
-
+        <SensorGraph />
         <div>
           <h3 className="mb-4 mt-6 font-semibold text-lg">
             Performance Highlights:

@@ -42,7 +42,7 @@ export const useDryerStore = create<DryerStore>()(
         set((state) => ({
           runData: {
             ...state.runData,
-            [key]: value ?? null, // ensures undefined is also stored as null
+            [key]: value ?? null,
           },
         })),
       setRunData: (data) =>
