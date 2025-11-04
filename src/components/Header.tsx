@@ -1,8 +1,13 @@
 import Link from "next/link";
 import Button from "./ul/Button";
 import Logo from "./ul/Logo";
+import { Dispatch, SetStateAction } from "react";
 
-const Header = () => {
+const Header = ({
+  setShowDemo,
+}: {
+  setShowDemo: Dispatch<SetStateAction<boolean>>;
+}) => {
   return (
     <div className="bg-white px-4  mx-auto rounded-lg flex justify-between items-center max-w-[980px]">
       <Logo />
@@ -18,7 +23,7 @@ const Header = () => {
         ))}
       </ul>
 
-      <Button name="View Demo" />
+      <Button onClick={() => setShowDemo(true)} name="View Demo" />
     </div>
   );
 };
