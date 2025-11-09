@@ -39,7 +39,10 @@ export default function OptimizationTips() {
         }
       } catch (error) {
         // fallback to static placeholder tips
-        console.warn("Optimization fetch failed, using placeholder tips.");
+        console.warn(
+          "Optimization fetch failed, using placeholder tips.",
+          error
+        );
       }
     };
 

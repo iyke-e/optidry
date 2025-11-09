@@ -16,14 +16,8 @@ interface SensorResponse {
   timestamp: string;
 }
 
-interface OptimizationResponse {
-  recommendations: string[];
-}
-
 const SENSOR_URL =
   "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/sensor";
-const OPTIMIZE_URL =
-  "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/optimize";
 
 export default function OptimizationRunScreen() {
   const router = useRouter();
@@ -31,8 +25,6 @@ export default function OptimizationRunScreen() {
   const { runData, setRunData } = useDryerStore();
 
   const [error, setError] = useState("");
-  const [tips, setTips] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
@@ -40,53 +32,6 @@ export default function OptimizationRunScreen() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startRef = useRef<number | null>(null);
   const failCount = useRef(0);
-
-  const stopPolling = () => {
-    if (!intervalRef.current) return;
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
-  };
-
-  const failOut = () => {
-    stopPolling();
-    setStatus("stopped");
-    router.push("/new-run/sensor-check");
-  };
-
-  const pollSensor = async () => {
-    try {
-      const res = await fetch(SENSOR_URL);
-      if (!res.ok) {
-        if (++failCount.current >= 10) failOut();
-        return;
-      }
-
-      const s: SensorResponse = await res.json();
-      if (!s.temperature && !s.humidity && !s.vibration) {
-        if (++failCount.current >= 10) failOut();
-        return;
-      }
-
-      failCount.current = 0;
-      setData({
-        temperature: s.temperature ?? null,
-        humidity: s.humidity ?? null,
-        vibration: s.vibration ?? null,
-        timestamp: new Date(s.timestamp).getTime() ?? null,
-      });
-
-      if (s.humidity) {
-        const h = Number(s.humidity);
-        setProgress(Math.min(100, Math.max(0, 100 - h / 2)));
-      }
-
-      setLoading(false);
-    } catch {
-      if (++failCount.current >= 10) failOut();
-      setError("Sensor fetch failed");
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const hours = Math.floor(Math.random() * 5) + 1;
@@ -105,35 +50,77 @@ export default function OptimizationRunScreen() {
     return () => clearInterval(timer);
   }, [estimatedTime]);
 
+  // Sensor polling effect
   useEffect(() => {
-    const fetchOptimizations = async () => {
+    if (status !== "running") {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    intervalRef.current = setInterval(async () => {
       try {
-        const res = await fetch(OPTIMIZE_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(runData),
+        const res = await fetch(SENSOR_URL);
+        if (!res.ok) {
+          if (++failCount.current >= 10) {
+            clearInterval(intervalRef.current!);
+            intervalRef.current = null;
+            setStatus("stopped");
+            router.push("/new-run/sensor-check");
+          }
+          return;
+        }
+
+        const s: SensorResponse = await res.json();
+        if (!s.temperature && !s.humidity && !s.vibration) {
+          if (++failCount.current >= 10) {
+            clearInterval(intervalRef.current!);
+            intervalRef.current = null;
+            setStatus("stopped");
+            router.push("/new-run/sensor-check");
+          }
+          return;
+        }
+
+        failCount.current = 0;
+        setData({
+          temperature: s.temperature ?? null,
+          humidity: s.humidity ?? null,
+          vibration: s.vibration ?? null,
+          timestamp: new Date(s.timestamp).getTime() ?? null,
         });
-        const d: OptimizationResponse = await res.json();
-        if (Array.isArray(d.recommendations)) setTips(d.recommendations);
+
+        if (s.humidity) {
+          const h = Number(s.humidity);
+          setProgress(Math.min(100, Math.max(0, 100 - h / 2)));
+        }
       } catch {
-        setTips([]);
+        if (++failCount.current >= 10) {
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+          setStatus("stopped");
+          router.push("/new-run/sensor-check");
+        }
+        setError("Sensor fetch failed");
+      }
+    }, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
-    fetchOptimizations();
-  }, [runData]);
-
-  useEffect(() => {
-    if (status === "running") {
-      if (!intervalRef.current)
-        intervalRef.current = setInterval(pollSensor, 1000);
-    } else {
-      stopPolling();
-    }
-    return stopPolling;
-  }, [status]);
+  }, [status, setData, setStatus, router]);
 
   const endRun = () => {
-    stopPolling();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
     setStatus("stopped");
     setRunData({
       ...runData,
@@ -162,6 +149,7 @@ export default function OptimizationRunScreen() {
       />
 
       <ProgressBar progress={progress} />
+
       <OptimizationTips />
 
       <div className="flex justify-evenly items-center gap-4 mt-8">

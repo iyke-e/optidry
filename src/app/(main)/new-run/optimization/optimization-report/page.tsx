@@ -3,14 +3,12 @@ import Button from "@/components/ul/Button";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDryerStore } from "@/store/useDryerStore";
-import { useSensorStore } from "@/store/useSensorStore";
 import SensorGraph from "@/components/optimization/SensorGraph";
 
 const OptimizationReportScreen = () => {
   const router = useRouter();
 
   const runData = useDryerStore((state) => state.runData);
-  const sensorData = useSensorStore((state) => state.data);
 
   const [savedTime, setSavedTime] = useState("");
 

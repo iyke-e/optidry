@@ -2,16 +2,32 @@
 
 import Link from "next/link";
 import Button from "@/components/ul/Button";
-import { useDryerStore } from "@/store/useDryerStore";
+import { useDryerStore, DryerRunData } from "@/store/useDryerStore";
 import { useEffect, useState } from "react";
 import cropdata from "@/data/crop_dryer_data.json";
 
+// Type definitions for your JSON structure
+interface Dryer {
+  "Dryer Type": string;
+  [key: string]: unknown; // other optional fields
+}
+
+interface CropItem {
+  Crop: string;
+  Dryers: Dryer[];
+}
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
+
 const DashboardScreen = () => {
   const { runData, updateRunData, resetRunData } = useDryerStore();
-  const [error, setError] = useState("");
-  const [availableDryers, setAvailableDryers] = useState<
-    { label: string; value: string }[]
-  >([{ label: "Select Dryer Type", value: "" }]);
+  const [error, setError] = useState<string>("");
+  const [availableDryers, setAvailableDryers] = useState<SelectOption[]>([
+    { label: "Select Dryer Type", value: "" },
+  ]);
 
   const canProceed = runData.crop && runData.dryer;
 
@@ -26,12 +42,12 @@ const DashboardScreen = () => {
 
   useEffect(() => {
     resetRunData();
-  }, []);
+  }, [resetRunData]);
 
   // Generate crop options directly from JSON
-  const cropOptions = [
+  const cropOptions: SelectOption[] = [
     { label: "Select Material", value: "" },
-    ...cropdata.map((item) => ({
+    ...(cropdata as CropItem[]).map((item) => ({
       label: item.Crop,
       value: item.Crop,
     })),
@@ -40,9 +56,11 @@ const DashboardScreen = () => {
   // Update dryer list when crop changes
   useEffect(() => {
     if (runData.crop) {
-      const crop = cropdata.find((item) => item.Crop === runData.crop);
+      const crop = (cropdata as CropItem[]).find(
+        (item) => item.Crop === runData.crop
+      );
       if (crop) {
-        const dryers = crop.Dryers.map((d: any) => ({
+        const dryers: SelectOption[] = crop.Dryers.map((d) => ({
           label: d["Dryer Type"],
           value: d["Dryer Type"],
         }));
@@ -57,7 +75,7 @@ const DashboardScreen = () => {
       setAvailableDryers([{ label: "Select Dryer Type", value: "" }]);
     }
     updateRunData("dryer", "");
-  }, [runData.crop]);
+  }, [runData.crop, updateRunData]);
 
   return (
     <>

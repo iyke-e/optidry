@@ -16,9 +16,9 @@ import { useSensorStore } from "@/store/useSensorStore";
 export default function SensorGraph() {
   const { data: sensorData, records, addRecord } = useSensorStore();
 
-  useEffect(() => {
-    const { timestamp, temperature, humidity } = sensorData;
+  const { timestamp, temperature, humidity } = sensorData;
 
+  useEffect(() => {
     if (
       timestamp === null ||
       temperature === null ||
@@ -33,12 +33,7 @@ export default function SensorGraph() {
       temperature: Number(temperature),
       humidity: Number(humidity),
     });
-  }, [
-    sensorData.timestamp,
-    sensorData.temperature,
-    sensorData.humidity,
-    addRecord,
-  ]);
+  }, [timestamp, temperature, humidity, addRecord]); // dependencies are just the primitive values
 
   return (
     <div className="w-full flex gap-6 mt-8">
@@ -49,11 +44,7 @@ export default function SensorGraph() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="time" />
             <YAxis
-              label={{
-                value: "Temp (°C)",
-                angle: -90,
-                position: "insideLeft",
-              }}
+              label={{ value: "Temp (°C)", angle: -90, position: "insideLeft" }}
             />
             <Tooltip />
             <Legend />
