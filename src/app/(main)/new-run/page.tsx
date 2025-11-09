@@ -3,42 +3,15 @@
 import Link from "next/link";
 import Button from "@/components/ul/Button";
 import { useDryerStore } from "@/store/useDryerStore";
-import { use, useEffect, useState } from "react";
-
-const materialsToDry = [
-  { label: "Select Material", value: "" },
-  { label: "Maize (Corn)", value: "maize" },
-  { label: "Cassava (Chips, Garri, Flour)", value: "cassava" },
-  { label: "Rice (Paddy or Parboiled)", value: "rice" },
-  { label: "Yam (Flakes or Chips)", value: "yam" },
-  { label: "Plantain (Chips or Powder)", value: "plantain" },
-  { label: "Pepper (Chili, Red, Green)", value: "pepper" },
-  { label: "Tomato", value: "tomato" },
-  { label: "Okra", value: "okra" },
-  { label: "Fish (Smoked or Dried)", value: "fish" },
-  { label: "Groundnut (Peanut)", value: "groundnut" },
-  { label: "Beans (Cowpea, Soya bean)", value: "beans" },
-  { label: "Cocoa Beans", value: "cocoa_beans" },
-  { label: "Onion", value: "onion" },
-  { label: "Ginger", value: "ginger" },
-  { label: "Palm Kernel or Palm Fruit Fiber", value: "palm_fiber" },
-];
-
-const dryerTypes = [
-  { label: "Select Dryer Type", value: "" },
-  { label: "Tray", value: "tray" },
-  { label: "Cabinet", value: "cabinet" },
-  { label: "Rotary", value: "rotary" },
-  { label: "Solar", value: "solar" },
-  { label: "Fluidized Bed", value: "fluidized_bed" },
-  { label: "Conveyor", value: "conveyor" },
-  { label: "Oven", value: "oven" },
-  { label: "Hybrid Solar Electric Dryer", value: "hybrid_solar_electric" },
-];
+import { useEffect, useState } from "react";
+import cropdata from "@/data/crop_dryer_data.json";
 
 const DashboardScreen = () => {
   const { runData, updateRunData, resetRunData } = useDryerStore();
   const [error, setError] = useState("");
+  const [availableDryers, setAvailableDryers] = useState<
+    { label: string; value: string }[]
+  >([{ label: "Select Dryer Type", value: "" }]);
 
   const canProceed = runData.crop && runData.dryer;
 
@@ -55,6 +28,37 @@ const DashboardScreen = () => {
     resetRunData();
   }, []);
 
+  // Generate crop options directly from JSON
+  const cropOptions = [
+    { label: "Select Material", value: "" },
+    ...cropdata.map((item) => ({
+      label: item.Crop,
+      value: item.Crop,
+    })),
+  ];
+
+  // Update dryer list when crop changes
+  useEffect(() => {
+    if (runData.crop) {
+      const crop = cropdata.find((item) => item.Crop === runData.crop);
+      if (crop) {
+        const dryers = crop.Dryers.map((d: any) => ({
+          label: d["Dryer Type"],
+          value: d["Dryer Type"],
+        }));
+        setAvailableDryers([
+          { label: "Select Dryer Type", value: "" },
+          ...dryers,
+        ]);
+      } else {
+        setAvailableDryers([{ label: "Select Dryer Type", value: "" }]);
+      }
+    } else {
+      setAvailableDryers([{ label: "Select Dryer Type", value: "" }]);
+    }
+    updateRunData("dryer", "");
+  }, [runData.crop]);
+
   return (
     <>
       <h2 className="text-xl mb-6 text-dark-blue font-semibold">
@@ -66,11 +70,11 @@ const DashboardScreen = () => {
         <div className="grid gap-2 w-full">
           <label>Select Material</label>
           <select
-            className="border relative outline-0 bg-input-bg border-black/20 rounded-lg px-4 py-2"
+            className="border bg-input-bg border-black/20 rounded-lg px-4 py-2 outline-0"
             value={runData.crop}
             onChange={(e) => updateRunData("crop", e.target.value)}
           >
-            {materialsToDry.map((item, index) => (
+            {cropOptions.map((item, index) => (
               <option key={index} value={item.value}>
                 {item.label}
               </option>
@@ -88,11 +92,11 @@ const DashboardScreen = () => {
         <div className="grid gap-2 w-full">
           <label>Select Dryer</label>
           <select
-            className="border relative outline-0 bg-input-bg border-black/20 rounded-lg px-4 py-2"
+            className="border bg-input-bg border-black/20 rounded-lg px-4 py-2 outline-0"
             value={runData.dryer}
             onChange={(e) => updateRunData("dryer", e.target.value)}
           >
-            {dryerTypes.map((item, index) => (
+            {availableDryers.map((item, index) => (
               <option key={index} value={item.value}>
                 {item.label}
               </option>

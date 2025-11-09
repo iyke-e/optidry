@@ -5,22 +5,32 @@ import { useDryerStore } from "@/store/useDryerStore";
 import Link from "next/link";
 import React from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
+import cropdata from "@/data/crop_dryer_data.json";
 
-const MositureScreen = () => {
+const MoistureScreen = () => {
   const { runData } = useDryerStore();
   const { crop } = runData;
+
+  const selectedCrop = cropdata.find((item) => item.Crop === crop);
+
+  const initialMC = selectedCrop ? selectedCrop["Initial MC (Max %)"] : null;
+  const finalMC = selectedCrop ? selectedCrop["Final MC (Max %)"] : null;
 
   return (
     <div className="grid gap-6 ">
       <p className="text-xl flex items-center gap-2">
         <FaCircleExclamation className="text-text-primary" /> Typical Initial
-        Moisture Content of {crop} ={" "}
-        <span className="text-text-primary">80%</span>
+        Moisture Content of {crop || "—"} ={" "}
+        <span className="text-text-primary">
+          {initialMC !== null ? `${initialMC}%` : "N/A"}
+        </span>
       </p>
       <p className="text-xl flex items-center gap-2">
         <FaCircleExclamation className="text-text-primary " /> Typical Storage
-        final Moisture Content of {crop} ={" "}
-        <span className="text-text-primary">20%</span>
+        Final Moisture Content of {crop || "—"} ={" "}
+        <span className="text-text-primary">
+          {finalMC !== null ? `${finalMC}%` : "N/A"}
+        </span>
       </p>
       <p className="text-xl text-center">
         Default values are loaded from the Material Library. You can modify them
@@ -36,4 +46,4 @@ const MositureScreen = () => {
   );
 };
 
-export default MositureScreen;
+export default MoistureScreen;
