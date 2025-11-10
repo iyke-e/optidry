@@ -53,7 +53,7 @@ const MoistureScreen = () => {
           name="Go back"
         />
         <Button
-          onClick={() => router.push("/new-run/sensor-check")}
+          onClick={() => router.push("/new-run/moisture-content/set-value")}
           name="Set Custom Value"
         />
         <Button
