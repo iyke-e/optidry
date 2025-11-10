@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Button from "@/components/ul/Button";
-import { useDryerStore, DryerRunData } from "@/store/useDryerStore";
+import { useDryerStore } from "@/store/useDryerStore";
 import { useEffect, useState } from "react";
 import cropdata from "@/data/crop_dryer_data.json";
 
