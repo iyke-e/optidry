@@ -5,6 +5,7 @@ import Button from "@/components/ul/Button";
 import Logo from "@/components/ul/Logo";
 import Link from "next/link";
 import { FaCircleExclamation } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 type SensorStatus = "checking" | "connected" | "not_connected";
 
@@ -22,6 +23,7 @@ const SensorCheck = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const checkSensors = async () => {
     setLoading(true);
@@ -34,7 +36,7 @@ const SensorCheck = () => {
 
     try {
       const res = await fetch(
-        "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/sensor",
+        "https://n7nvoksrehshlmbcoucoik7avm0xcxoa.lambda-url.eu-north-1.on.aws/sensor",
         {
           method: "GET",
           headers: { Accept: "application/json" },
@@ -115,7 +117,12 @@ const SensorCheck = () => {
           Please confirm all sensors are properly mounted before proceeding
         </p>
 
-        <div className="flex items-center gap-10 justify-center">
+        <div className="flex items-center gap-6 justify-center">
+          <Button
+            name="Go Back"
+            onClick={() => router.back()}
+            disabled={loading}
+          />
           <Button name="Recheck" onClick={checkSensors} disabled={loading} />
           <Link href={allConnected ? "/new-run/optimization" : "#"}>
             <Button name="Continue" disabled={!allConnected || loading} />

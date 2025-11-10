@@ -101,7 +101,7 @@ const MateralScreen = () => {
       <div className="flex justify-between">
         <div>
           <h1 className="text-text-primary text-3xl font-bold">
-            Saved Runs/Presets
+            Material Profiles
           </h1>
           <p className="text-semibold">
             Explore your saved drying simulations. Revisit results, compare

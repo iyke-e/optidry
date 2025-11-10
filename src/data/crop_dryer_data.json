@@ -276,6 +276,18 @@
     "Critical Temperature Limit (∘C)": 65,
     "Dryers": [
       {
+        "Dryer Type": "Oven Dryer",
+        "Air Temp (Max ∘C)": 65,
+        "Air Velocity (Max m/s)": 2,
+        "Drying Time (Max hours)": 10.0
+      },
+      {
+        "Dryer Type": "Microwave",
+        "Air Temp (Max ∘C)": 60,
+        "Air Velocity (Max m/s)": 2,
+        "Drying Time (Max hours)": 0.5
+      },
+      {
         "Dryer Type": "Tray Dryer",
         "Air Temp (Max ∘C)": 60,
         "Air Velocity (Max m/s)": 3.5,

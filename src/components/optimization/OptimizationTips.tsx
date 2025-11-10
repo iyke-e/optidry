@@ -8,7 +8,7 @@ interface OptimizationResponse {
 }
 
 const OPTIMIZE_URL =
-  "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/optimize";
+  "https://n7nvoksrehshlmbcoucoik7avm0xcxoa.lambda-url.eu-north-1.on.aws/optimize";
 
 export default function OptimizationTips() {
   const { runData } = useDryerStore();

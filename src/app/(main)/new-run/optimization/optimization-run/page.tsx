@@ -17,7 +17,7 @@ interface SensorResponse {
 }
 
 const SENSOR_URL =
-  "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/sensor";
+  "https://n7nvoksrehshlmbcoucoik7avm0xcxoa.lambda-url.eu-north-1.on.aws/sensor";
 
 export default function OptimizationRunScreen() {
   const router = useRouter();
