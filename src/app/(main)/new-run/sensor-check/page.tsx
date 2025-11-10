@@ -33,10 +33,12 @@ const SensorCheck = () => {
       humidity: "checking",
       vibration: "checking",
     });
+    // new endpoint
+    // "https://n7nvoksrehshlmbcoucoik7avm0xcxoa.lambda-url.eu-north-1.on.aws/sensor",
 
     try {
       const res = await fetch(
-        "https://n7nvoksrehshlmbcoucoik7avm0xcxoa.lambda-url.eu-north-1.on.aws/sensor",
+        "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/sensor",
         {
           method: "GET",
           headers: { Accept: "application/json" },
