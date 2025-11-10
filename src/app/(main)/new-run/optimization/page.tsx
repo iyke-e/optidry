@@ -14,12 +14,12 @@ const Optimization = () => {
   const { dryer, crop, initial_moisture_content, final_moisture_content } =
     runData;
 
+  // Convert possibly null or numeric values to string safely
+  const initialMC = initial_moisture_content?.toString().trim() || "";
+  const finalMC = final_moisture_content?.toString().trim() || "";
+
   const canProceed =
-    isChecked &&
-    dryer.trim() &&
-    crop.trim() &&
-    initial_moisture_content.trim() &&
-    final_moisture_content.trim();
+    isChecked && dryer.trim() && crop.trim() && initialMC && finalMC;
 
   const handleOptimizationStart = () => {
     if (!canProceed) return;
@@ -46,14 +46,14 @@ const Optimization = () => {
         <div className="flex justify-between items-center">
           <p className="text-xl">Initial Moisture Content:</p>
           <p className="text-text-primary font-semibold">
-            {initial_moisture_content ? `${initial_moisture_content}%` : "N/A"}
+            {initialMC ? `${initialMC}%` : "N/A"}
           </p>
         </div>
 
         <div className="flex justify-between items-center">
           <p className="text-xl">Target Moisture Content:</p>
           <p className="text-text-primary font-semibold">
-            {final_moisture_content ? `${final_moisture_content}%` : "N/A"}
+            {finalMC ? `${finalMC}%` : "N/A"}
           </p>
         </div>
 

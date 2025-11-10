@@ -2,7 +2,6 @@
 
 import Button from "@/components/ul/Button";
 import { useDryerStore } from "@/store/useDryerStore";
-import Link from "next/link";
 import React, { useEffect } from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
 import cropdata from "@/data/crop_dryer_data.json";
