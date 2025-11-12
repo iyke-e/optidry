@@ -44,7 +44,8 @@ export default function OptimizationRunScreen() {
     if (!crop) return;
 
     const dryer = crop.Dryers.find(
-      (d: any) => d["Dryer Type"].toLowerCase() === runData.dryer.toLowerCase()
+      (d: { "Dryer Type": string }) =>
+        d["Dryer Type"].toLowerCase() === runData.dryer?.toLowerCase()
     );
 
     const hours = dryer ? Number(dryer["Drying Time (Max hours)"]) : 0;
