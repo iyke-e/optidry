@@ -8,6 +8,7 @@ import { useSensorStore } from "@/store/useSensorStore";
 import OptimizationInfo from "@/components/optimization/OptimzationInfo";
 import ProgressBar from "@/components/optimization/ProgressBar";
 import OptimizationTips from "@/components/optimization/OptimizationTips";
+import cropdata from "@/data/crop_dryer_data.json";
 
 interface SensorResponse {
   temperature: string;
@@ -15,8 +16,6 @@ interface SensorResponse {
   vibration: string;
   timestamp: string;
 }
-
-// "https://n7nvoksrehshlmbcoucoik7avm0xcxoa.lambda-url.eu-north-1.on.aws/sensor";
 
 const SENSOR_URL =
   "https://bipel2bpd2pgq3ojogco5nujky0icbnh.lambda-url.eu-north-1.on.aws/api/sensor";
@@ -35,24 +34,49 @@ export default function OptimizationRunScreen() {
   const startRef = useRef<number | null>(null);
   const failCount = useRef(0);
 
+  // Load drying time based on crop + dryer type
   useEffect(() => {
-    const hours = Math.floor(Math.random() * 5) + 1;
-    const total = hours * 60 * 60 * 1000;
+    if (!runData.crop || !runData.dryer) return;
+
+    const crop = cropdata.find(
+      (c) => c.Crop.toLowerCase() === runData.crop.toLowerCase()
+    );
+    if (!crop) return;
+
+    const dryer = crop.Dryers.find(
+      (d: any) => d["Dryer Type"].toLowerCase() === runData.dryer.toLowerCase()
+    );
+
+    const hours = dryer ? Number(dryer["Drying Time (Max hours)"]) : 0;
+    const total = hours * 60 * 60 * 1000; // convert hours to ms
     setEstimatedTime(total);
     startRef.current = Date.now();
     setRemainingTime(total);
-  }, []);
+    setProgress(0); // reset progress at start
+  }, [runData.crop, runData.dryer]);
 
+  // Countdown & progress update based on time
   useEffect(() => {
     if (!estimatedTime) return;
+
     const timer = setInterval(() => {
       const elapsed = Date.now() - (startRef.current || 0);
-      setRemainingTime(Math.max(estimatedTime - elapsed, 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [estimatedTime]);
+      const newRemainingTime = Math.max(estimatedTime - elapsed, 0);
+      const newProgress = Math.min(100, (elapsed / estimatedTime) * 100);
 
-  // Sensor polling effect
+      setRemainingTime(newRemainingTime);
+      setProgress(newProgress);
+
+      if (newRemainingTime === 0) {
+        setStatus("stopped");
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [estimatedTime, setStatus]);
+
+  // Sensor polling every 2 seconds
   useEffect(() => {
     if (status !== "running") {
       if (intervalRef.current) {
@@ -65,26 +89,11 @@ export default function OptimizationRunScreen() {
     intervalRef.current = setInterval(async () => {
       try {
         const res = await fetch(SENSOR_URL);
-        if (!res.ok) {
-          if (++failCount.current >= 10) {
-            clearInterval(intervalRef.current!);
-            intervalRef.current = null;
-            setStatus("stopped");
-            router.push("/new-run/sensor-check");
-          }
-          return;
-        }
+        if (!res.ok) throw new Error("Sensor fetch failed");
 
         const s: SensorResponse = await res.json();
-        if (!s.temperature && !s.humidity && !s.vibration) {
-          if (++failCount.current >= 10) {
-            clearInterval(intervalRef.current!);
-            intervalRef.current = null;
-            setStatus("stopped");
-            router.push("/new-run/sensor-check");
-          }
-          return;
-        }
+        if (!s.temperature && !s.humidity && !s.vibration)
+          throw new Error("Empty sensor data");
 
         failCount.current = 0;
         setData({
@@ -93,21 +102,16 @@ export default function OptimizationRunScreen() {
           vibration: s.vibration ?? null,
           timestamp: new Date(s.timestamp).getTime() ?? null,
         });
-
-        if (s.humidity) {
-          const h = Number(s.humidity);
-          setProgress(Math.min(100, Math.max(0, 100 - h / 2)));
-        }
       } catch {
         if (++failCount.current >= 10) {
-          clearInterval(intervalRef.current!);
+          if (intervalRef.current) clearInterval(intervalRef.current);
           intervalRef.current = null;
           setStatus("stopped");
           router.push("/new-run/sensor-check");
         }
         setError("Sensor fetch failed");
       }
-    }, 1000);
+    }, 2000);
 
     return () => {
       if (intervalRef.current) {
@@ -150,7 +154,11 @@ export default function OptimizationRunScreen() {
         timeLeft={remainingTime}
       />
 
-      <ProgressBar progress={progress} />
+      <ProgressBar
+        progress={progress}
+        estimatedTime={estimatedTime}
+        remainingTime={remainingTime}
+      />
 
       <OptimizationTips />
 
